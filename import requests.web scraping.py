@@ -25,10 +25,10 @@ for summary in question_summary:
     "answers":answers_count,
     "views":view_count,
     "votes": vote_count
-    })
+    }) 
     return page_questions
 
-
+    
 def scrape():
     """
     function to scrape to PAGE_LIMIT
@@ -40,5 +40,4 @@ def scrape():
         return questions
 
 
-if_name_=="_main_":
 print(scrape())
