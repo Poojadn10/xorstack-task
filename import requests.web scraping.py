@@ -20,12 +20,12 @@ for summary in question_summary:
     vote_count = summary.find(class_="vote-count-post").find("strong").text
     answer_count = summary.find(class_="status").find("strong").text
     view_count = summary.find(class_="views").text.split()[0]
-    page_questions.append({
+    page_questions.append(
     "question":question,
     "answers":answers_count,
     "views":view_count,
     "votes": vote_count
-    }) 
+    ) 
     return page_questions
 
     
