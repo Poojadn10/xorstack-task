@@ -1,28 +1,44 @@
+from bs4 import Beautifulsoup
 import requests
-from bs4 import BeautifulSoup
+URL = "https://stackoverflow.com/questions"
+PAGE_LIMIT = 1
 
-def scrape_stack_overflow():
-    # URL of the Stack Overflow questions page
-    url = 'https://stackoverflow.com/questions'
+def build_url(base_url=URL, tab="newest",page=1):
+    return f"{base_url}?tab={tab}&page={page}" # example: stackoverflow.com/questions?tab=newest&page=1
 
-    # Send a GET request to the URL
-    response = requests.get(url)
 
-    # Check if the request was successful (status code 200)
-    if response.status_code == 200:
-        # Parse the HTML content of the page
-        soup = BeautifulSoup(response.text, 'html.parser')
+def scrape_page(page=1):
+    """
+    function to scrape a single page on stackoverflow
+    """
+response = requests.get(build_url(page=page))
+page_questions= []
+soup=Beautifulsoup(response.text, "html.parser")
+question_summary = soup.find_all("div", class_="question-summary")
+for summary in question_summary:
+    question = summary.find(class_="question-hyperlink").text
+    vote_count = summary.find(class_="vote-count-post").find("strong").text
+    answer_count = summary.find(class_="status").find("strong").text
+    view_count = summary.find(class_="views").text.split()[0]
+    page_questions.append({
+    "question":question,
+    "answers":answers_count,
+    "views":view_count,
+    "votes": vote_count
+    })
+    return page_questions
 
-        # Extract information about questions
-        questions = soup.find_all('div', class_='question-summary')
 
-        # Iterate through each question and print its title
-        for question in questions:
-            title = question.find('h3').text.strip()
-            print(f"Question: {title}\n")
+def scrape():
+    """
+    function to scrape to PAGE_LIMIT
+    """
+    questions = []
+    for i in range(1, PAGE_LIMIT + 1):
+        page_questions = scrape_page(1)
+        questions.extend(page_questions)
+        return questions
 
-    else:
-        print(f"Failed to retrieve page. Status code: {response.status_code}")
 
-if __name__ == "__main__":
-    scrape_stack_overflow()
+if_name_=="_main_":
+print(scrape())
